@@ -1,0 +1,33 @@
+#!/usr/bin/make -f
+# -*- mode: makefile; coding: utf-8 -*-
+
+#DEB_MAKE_CHECK_TARGET = test_logos
+#build/logosd::
+#	$(if $(filter nocheck,$(DEB_BUILD_OPTIONS)),,src/test_logos)
+
+DEB_INSTALL_EXAMPLES_logosd += debian/examples/*
+DEB_INSTALL_MANPAGES_logosd += debian/manpages/*
+
+%:
+	dh --with bash-completion $@
+
+override_dh_auto_build:
+	cd src; $(MAKE) -f makefile.unix logosd
+	$(MAKE)
+
+override_dh_auto_clean:
+	if [ -f Makefile ]; then $(MAKE) clean; else rm -rf build/; rm -f logos-qt; fi
+	cd src; $(MAKE) -f makefile.unix clean
+
+override_dh_auto_configure:
+	qmake logos-qt.pro USE_QRCODE=1
+
+override_dh_auto_test:
+	cd src; $(MAKE) -f makefile.unix test_logos
+	src/test_logos
+
+# Ensure wrapper is set executable
+binary-post-install/logosd:
+	chmod +x $(cdbs_curdestdir)usr/bin/logosd
+binary-post-install/logos-qt:
+	chmod +x $(cdbs_curdestdir)usr/bin/logos-qt

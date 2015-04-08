@@ -1,0 +1,11 @@
+[Protocol]
+exec=logos-qt '%u'
+protocol=logos
+input=none
+output=none
+helper=true
+listing=
+reading=false
+writing=false
+makedir=false
+deleting=false
